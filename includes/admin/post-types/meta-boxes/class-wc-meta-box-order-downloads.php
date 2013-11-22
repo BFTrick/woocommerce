@@ -164,15 +164,23 @@ class WC_Meta_Box_Order_Downloads {
 						};
 
 						jQuery.post('<?php echo admin_url('admin-ajax.php'); ?>', data, function(response) {
-							// Success
-							jQuery(el).fadeOut('300', function(){
-								jQuery(el).remove();
+							// success
+							jQuery(el).unblock({
+								message: null, 
+								overlayCSS: { background: 'none', opacity: 1 }
 							});
+
+							// copy new value to expires box
+							var myDate = new Date();
+							var month = parseInt(myDate.getMonth()) + 1;
+							var now = (myDate.getFullYear() + '-' + month + '-' + (myDate.getDate()));
+							jQuery( '.access-expires', el ).val( now );
 						});
 
 					} else {
-						jQuery(el).fadeOut('300', function(){
-							jQuery(el).remove();
+						jQuery(el).unblock({
+							message: null, 
+							overlayCSS: { background: 'none', opacity: 1 }
 						});
 					}
 
