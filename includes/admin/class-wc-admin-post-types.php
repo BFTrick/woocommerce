@@ -30,7 +30,7 @@ class WC_Admin_Post_Types {
 		add_filter( 'manage_edit-product_columns', array( $this, 'product_columns' ) );
 		add_filter( 'manage_edit-shop_coupon_columns', array( $this, 'shop_coupon_columns' ) );
 		add_filter( 'manage_edit-shop_order_columns', array( $this, 'shop_order_columns' ) );
-		
+
 		add_action( 'manage_product_posts_custom_column', array( $this, 'render_product_columns' ), 2 );
 		add_action( 'manage_shop_coupon_posts_custom_column', array( $this, 'render_shop_coupon_columns' ), 2 );
 		add_action( 'manage_shop_order_posts_custom_column', array( $this, 'render_shop_order_columns' ), 2 );
@@ -51,7 +51,7 @@ class WC_Admin_Post_Types {
 		add_action( 'load-edit.php', array( $this, 'bulk_action' ) );
 		add_action( 'admin_notices', array( $this, 'bulk_admin_notices' ) );
 
-		// Order Search 
+		// Order Search
 		add_filter( 'get_search_query', array( $this, 'shop_order_search_label' ) );
 		add_filter( 'query_vars', array( $this, 'add_custom_query_var' ) );
 		add_action( 'parse_query', array( $this, 'shop_order_search_custom_fields' ) );
@@ -472,7 +472,7 @@ class WC_Admin_Post_Types {
 			break;
 			case 'order_items' :
 
-				printf( '<a href="#" class="show_order_items">' . _n( '%d item', '%d items', sizeof( $the_order->get_items() ), 'woocommerce' ) . '</a>', sizeof( $the_order->get_items() ) );
+				echo '<a href="#" class="show_order_items">' . apply_filters( 'woocommerce_admin_order_item_count', sprintf( _n( '%d item', '%d items', $the_order->get_item_count(), 'woocommerce' ), $the_order->get_item_count() ), $the_order ) . '</a>';
 
 				if ( sizeof( $the_order->get_items() ) > 0 ) {
 
@@ -483,7 +483,7 @@ class WC_Admin_Post_Types {
 						$item_meta      = new WC_Order_Item_Meta( $item['item_meta'] );
 						$item_meta_html = $item_meta->display( true, true );
 						?>
-						<tr>
+						<tr class="<?php echo apply_filters( 'woocommerce_admin_order_item_class', '', $item ); ?>">
 							<td class="qty"><?php echo absint( $item['qty'] ); ?></td>
 							<td class="name">
 								<?php if ( wc_product_sku_enabled() && $_product && $_product->get_sku() ) echo $_product->get_sku() . ' - '; ?><?php echo apply_filters( 'woocommerce_order_item_name', $item['name'], $item ); ?>
@@ -676,7 +676,7 @@ class WC_Admin_Post_Types {
 		unset( $columns['comments'] );
 
 		return wp_parse_args( $custom, $columns );
-	}		
+	}
 
 	/**
 	 * Remove edit from the bulk actions.
@@ -852,13 +852,15 @@ class WC_Admin_Post_Types {
 		}
 
 		if ( isset( $_REQUEST['_visibility'] ) ) {
-			update_post_meta( $post_id, '_visibility', wc_clean( $_REQUEST['_visibility'] ) );
+			if ( update_post_meta( $post_id, '_visibility', wc_clean( $_REQUEST['_visibility'] ) ) ) {
+				do_action( 'woocommerce_product_set_visibility', $post_id, wc_clean( $_REQUEST['_visibility'] ) );
+			}
 		}
 
 		if ( isset( $_REQUEST['_featured'] ) ) {
-			update_post_meta( $post_id, '_featured', 'yes' );
-		} else {
-			update_post_meta( $post_id, '_featured', 'no' );
+			if ( update_post_meta( $post_id, '_featured', isset( $_REQUEST['_featured'] ) ? 'yes' : 'no' ) ) {
+				delete_transient( 'wc_featured_products' );
+			}
 		}
 
 		if ( isset( $_REQUEST['_tax_status'] ) ) {
@@ -970,11 +972,15 @@ class WC_Admin_Post_Types {
 		}
 
 		if ( ! empty( $_REQUEST['_visibility'] ) ) {
-			update_post_meta( $post_id, '_visibility', stripslashes( $_REQUEST['_visibility'] ) );
+			if ( update_post_meta( $post_id, '_visibility', wc_clean( $_REQUEST['_visibility'] ) ) ) {
+				do_action( 'woocommerce_product_set_visibility', $post_id, wc_clean( $_REQUEST['_visibility'] ) );
+			}
 		}
 
 		if ( ! empty( $_REQUEST['_featured'] ) ) {
-			update_post_meta( $post_id, '_featured', stripslashes( $_REQUEST['_featured'] ) );
+			if ( update_post_meta( $post_id, '_featured', stripslashes( $_REQUEST['_featured'] ) ) ) {
+				delete_transient( 'wc_featured_products' );
+			}
 		}
 
 		// Sold Individually
@@ -1762,7 +1768,6 @@ class WC_Admin_Post_Types {
 				}
 
 				delete_transient( 'woocommerce_processing_order_count' );
-				delete_transient( 'wc_term_counts' );
 			}
 
 		}
@@ -1791,7 +1796,6 @@ class WC_Admin_Post_Types {
 				}
 
 				delete_transient( 'woocommerce_processing_order_count' );
-				delete_transient( 'wc_term_counts' );
 			}
 
 		}
@@ -2044,7 +2048,7 @@ class WC_Admin_Post_Types {
 				}
 			}
 		}
-	}	
+	}
 }
 
 endif;

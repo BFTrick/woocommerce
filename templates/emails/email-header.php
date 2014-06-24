@@ -100,12 +100,14 @@ $header_content_h1 = "
         	<table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
             	<tr>
                 	<td align="center" valign="top">
-                		<?php
-                			if ( $header_img ) {
-                				echo '<p style="margin-top:0;"><img src="' . esc_url( $header_img ) . '" alt="' . get_bloginfo( 'name' ) . '" /></p>';
-                			}
-                		?>
-                    	<table border="0" cellpadding="0" cellspacing="0" width="<?php echo $width; ?>" id="template_container" style="<?php echo $template_container; ?>">
+						<div id="template_header_image">
+	                		<?php
+	                			if ( $header_img ) {
+	                				echo '<p style="margin-top:0;"><img src="' . esc_url( $header_img ) . '" alt="' . get_bloginfo( 'name' ) . '" /></p>';
+	                			}
+	                		?>
+						</div>
+						<table border="0" cellpadding="0" cellspacing="0" width="<?php echo $width; ?>" id="template_container" style="<?php echo $template_container; ?>">
                         	<tr>
                             	<td align="center" valign="top">
                                     <!-- Header -->
