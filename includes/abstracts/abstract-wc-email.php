@@ -344,7 +344,9 @@ abstract class WC_Email extends WC_Settings_API {
 		// create instance
 		$cssToInlineStyles = new CssToInlineStyles();
 
-		$css = 'body{ background-color: #FF0000 !important;}';
+		ob_start();
+		wc_get_template( 'emails/email-styles.php' );
+		$css = ob_get_clean();
 
 		$cssToInlineStyles->setHTML( $content );
 		$cssToInlineStyles->setCSS( $css );
