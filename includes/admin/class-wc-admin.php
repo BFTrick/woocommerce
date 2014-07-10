@@ -113,7 +113,7 @@ class WC_Admin {
 			include( 'views/html-email-template-preview.php' );
 
 			$mailer        = WC()->mailer();
-			$message       = ob_get_clean();
+			$message       = $mailer->emails['WC_Email_New_Order']->style_inline( ob_get_clean() );
 			$email_heading = __( 'HTML Email Template', 'woocommerce' );
 
 			echo $mailer->wrap_message( $email_heading, $message );
