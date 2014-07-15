@@ -161,14 +161,6 @@ abstract class WC_Email extends WC_Settings_API {
 
 		// For multipart messages
 		add_filter( 'phpmailer_init', array( $this, 'handle_multipart' ) );
-
-		// For default inline styles
-		add_filter( 'woocommerce_email_style_inline_tags', array( $this, 'style_inline_tags' ) );
-		add_filter( 'woocommerce_email_style_inline_h1_tag', array( $this, 'style_inline_h1_tag' ) );
-		add_filter( 'woocommerce_email_style_inline_h2_tag', array( $this, 'style_inline_h2_tag' ) );
-		add_filter( 'woocommerce_email_style_inline_h3_tag', array( $this, 'style_inline_h3_tag' ) );
-		add_filter( 'woocommerce_email_style_inline_a_tag', array( $this, 'style_inline_a_tag' ) );
-		add_filter( 'woocommerce_email_style_inline_img_tag', array( $this, 'style_inline_img_tag' ) );
 	}
 
 	/**
