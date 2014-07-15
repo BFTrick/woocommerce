@@ -161,6 +161,9 @@ abstract class WC_Email extends WC_Settings_API {
 
 		// For multipart messages
 		add_filter( 'phpmailer_init', array( $this, 'handle_multipart' ) );
+
+		// Inline CSS styles for html emails
+		add_filter( 'woocommerce_mail_content', array( $this, 'style_inline' ) );
 	}
 
 	/**
@@ -315,7 +318,7 @@ abstract class WC_Email extends WC_Settings_API {
 		if ( $this->get_email_type() == 'plain' ) {
 			$email_content = preg_replace( $this->plain_search, $this->plain_replace, strip_tags( $this->get_content_plain() ) );
 		} else {
-			$email_content = $this->style_inline( $this->get_content_html() );
+			$email_content = $this->get_content_html();
 		}
 
 		return wordwrap( $email_content, 70 );
@@ -326,26 +329,31 @@ abstract class WC_Email extends WC_Settings_API {
 	 * Apply inline styles to dynamic content.
 	 *
 	 * @access public
-	 * @param mixed $content
+	 * @param mixed $message
 	 * @return string
 	 */
-	function style_inline( $content ) {
+	function style_inline( $message ) {
 
-		require_once $GLOBALS['woocommerce']->plugin_path() . '/includes/libraries/class-css-to-inline-styles.php';
+		// make sure it's the right type of email
+		if( 'text/html' ==  $this->get_content_type() ) {
 
-		// create instance
-		$cssToInlineStyles = new CssToInlineStyles();
+			// load CSS inliner class
+			require_once $GLOBALS['woocommerce']->plugin_path() . '/includes/libraries/class-css-to-inline-styles.php';
 
-		ob_start();
-		wc_get_template( 'emails/email-styles.php' );
-		$css = ob_get_clean();
+			// create instance
+			$cssToInlineStyles = new CssToInlineStyles();
 
-		$cssToInlineStyles->setHTML( $content );
-		$cssToInlineStyles->setCSS( $css );
+			ob_start();
+			wc_get_template( 'emails/email-styles.php' );
+			$css = ob_get_clean();
 
-		$content = $cssToInlineStyles->convert();
+			$cssToInlineStyles->setHTML( $message );
+			$cssToInlineStyles->setCSS( $css );
 
-		return $content;
+			$message = $cssToInlineStyles->convert();
+		}
+
+		return $message;
 	}
 
 	/**
@@ -399,6 +407,13 @@ abstract class WC_Email extends WC_Settings_API {
 		add_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
 		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
 		add_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ) );
+
+		/**
+		* Filter the mail content
+		*
+		* @hooked inline_styles - 10
+		*/
+		$message = apply_filters( 'woocommerce_mail_content', $message, $content_type );
 
 		$return = wp_mail( $to, $subject, $message, $headers, $attachments );
 

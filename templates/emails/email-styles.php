@@ -24,10 +24,10 @@ $text_lighter_20 = wc_hex_lighter( $text, 20 );
 ?>
 #wrapper {
     background-color: <?php echo esc_attr( $bg ); ?>;
-    width: 100%;
-    -webkit-text-size-adjust: none !important;
     margin: 0;
     padding: 70px 0 70px 0;
+    -webkit-text-size-adjust: none !important;
+    width: 100%;
 }
 #template_container {
     box-shadow: 0 0 0 3px rgba(0,0,0,0.025) !important;
@@ -47,6 +47,9 @@ $text_lighter_20 = wc_hex_lighter( $text, 20 );
     line-height:100%;
     vertical-align:middle;
 }
+#template_header h1 {
+    color: <?php echo $base_text; ?>;
+}
 #body_content {
     background-color: <?php echo esc_attr( $body ); ?>;
     border-radius:6px !important;
@@ -59,15 +62,51 @@ $text_lighter_20 = wc_hex_lighter( $text, 20 );
     text-align:left;
 }
 h1 {
-    color: <?php echo esc_attr( $base_text ); ?>;
-    margin:0;
-    padding: 28px 24px;
-    text-shadow: 0 1px 0 <?php echo $base_lighter_20; ?>;
-    display:block;
-    font-family:Arial;
-    font-size:30px;
-    font-weight:bold;
-    text-align:left;
+    color: <?php echo esc_attr( $base ); ?>;
+    display: block;
+    font-family: Arial;
+    font-size: 30px;
+    font-weight: bold;
     line-height: 150%;
+    margin: 10px 0;
+    padding: 28px 24px;
+    text-align: left;
+    text-shadow: 0 1px 0 <?php echo $base_lighter_20; ?>;
+}
+h2 {
+    color: <?php echo esc_attr( $base ); ?>;
+    display: block;
+    font-family: Arial;
+    font-size: 30px;
+    font-weight: bold;
+    line-height: 150%;
+    margin: 10px 0;
+    text-align: left;
+}
+h3 {
+    color: <?php echo esc_attr( $base ); ?>;
+    display: block;
+    font-family: Arial;
+    font-size: 26px;
+    font-weight: bold;
+    line-height: 150%;
+    margin: 10px 0;
+    text-align: left;
+}
+a {
+    color: <?php echo esc_attr( $base ); ?>;
+    font-weight: normal;
+    text-decoration: underline;
+}
+img {
+    border: non;
+    display: inline;
+    font-size: 14px;
+    font-weight: bold;
+    height: auto;
+    line-height: 100%;
+    outline: none;
+    text-decoration: none;
+    text-transform: capitalize;
 }
 <?php
